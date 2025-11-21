@@ -15,9 +15,7 @@ let pos1 = 4;
 let pos2 = 0;
 let sub2 = [];
 let pos3 = 0;       
-let sub3 = [];     
-
-
+let sub3 = [];  
 
 
 function preload(){
@@ -69,7 +67,7 @@ function setup(){
     leftMid = leftarrSmall;
     leftBot = leftarrSmall;
     currentLeftArr = leftarrSmall;
-
+    // RIGHT ARROWS
     rightTop = rightarrSmall;
     rightMid = rightarrSmall;
     rightBot = rightarrSmall;
@@ -82,44 +80,44 @@ function setup(){
 }
 
 function draw(){
-    background(94,68,35);  // clear the screen
-    backdrop();                 // redraw the UI frame lines
+    let bob = sin(frameCount * 0.02) * 4;
+    background(94,68,35);  // clear screen
+    backdrop();
 
-    buttonSize();               // update which arrow is big
+    buttonSize();               // update buttonsss
     arrows();                   // draw all arrows
-
+    // TORSO
     for (i in sub2){
         if(pos2 === 0){ image(sno2, 0, 15); image(blueScarf, 100, 194); }
         if(pos2 === 1){ image(sno2, 0, 15); image(redScarf, 120, 185); }
         if(pos2 === 2){ image(sno2, 0, 15); image(buttons, 170, 230); }
     }
-
-    // draw your snowman + expressions like before
+    // HEAD AND EXPRESSIONS
     for (i in sub1){
-        if(pos1 === 0){ image(sno1, 0, 15); image(E1, 0, 10); }
-        if(pos1 === 1){ image(sno1, 0, 15); image(E2, 0, 25); }
-        if(pos1 === 2){ image(sno1, 0, 15); image(E3, 0, 10); }
-        if(pos1 === 3){ image(sno1, 0, 15); image(E4, 0, 10); }
-        if(pos1 === 4){ image(sno1, 0, 15); image(E5, 0, 10); }
-        if(pos1 === 5){ image(sno1, 0, 15); image(E6, 0, 10); }
-        if(pos1 === 6){ image(sno1, 0, 15); image(E7, 0, 10); }
-        if(pos1 === 7){ image(sno1, 0, 15); image(E8, 5, 10); }
-        if(pos1 === 8){ image(sno1, 0, 15); image(E9, 0, 10); }
+        if(pos1 === 0){ image(sno1, 0, 15 + bob); image(E1, 0, 10 + bob); }
+        if(pos1 === 1){ image(sno1, 0, 15 + bob); image(E2, 0, 25 + bob); }
+        if(pos1 === 2){ image(sno1, 0, 15 + bob); image(E3, 0, 10 + bob); }
+        if(pos1 === 3){ image(sno1, 0, 15 + bob); image(E4, 0, 10 + bob); }
+        if(pos1 === 4){ image(sno1, 0, 15 + bob); image(E5, 0, 10 + bob); }
+        if(pos1 === 5){ image(sno1, 0, 15 + bob); image(E6, 0, 10 + bob); }
+        if(pos1 === 6){ image(sno1, 0, 15 + bob); image(E7, 0, 10 + bob); }
+        if(pos1 === 7){ image(sno1, 0, 15 + bob); image(E8, 5, 10 + bob); }
+        if(pos1 === 8){ image(sno1, 0, 15 + bob); image(E9, 0, 10 + bob); }
     }
     // ACCESSORIES
     if (pos3 === 0) {image(buttons2, 190, 400);}
     if (pos3 === 1){}
     if (pos3 === 2) {image(presents, 40, 458);}
-    if (pos3 === 3) {image(tophat, 220, 15);}
+    if (pos3 === 3) {image(tophat, 220, 15 + bob);}
 
 }
 
-
+// function to make dashed linesss
 function setLineDash(list) {
   drawingContext.setLineDash(list);
 }
 
-
+// background stuff
 function backdrop(){
     fill(255, 90, 90);
     strokeWeight(4);
@@ -141,9 +139,7 @@ function backdrop(){
 }
 
 
-
-
-
+// register arrows being clicked
 function mouseClicked() {
 
     // --- RIGHT TOP ARROW ONLY ---
@@ -188,7 +184,7 @@ function mouseClicked() {
 
 }
 
-
+// HITBOXES
 let leftHitbox = [
     // top
     { x1: 22,  y1: 93,  w: 70, h: 90 },
@@ -240,7 +236,6 @@ function buttonSize() {
 
 
 
-
 function arrows() {
 
     // LEFT
@@ -282,3 +277,4 @@ function arrows() {
     image(rightarrSmall, -35, -45);
     pop();
 }
+
