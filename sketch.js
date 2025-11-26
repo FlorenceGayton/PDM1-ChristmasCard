@@ -1,3 +1,4 @@
+// Declare variables
 let sno1, sno2, sno3;
 let E1, E2, E3, E4, E5, E6, E7, E8, E9;
 let buttons2, empty, presents, tophat;
@@ -16,22 +17,29 @@ let pos2 = 0;
 let sub2 = [];
 let pos3 = 0;       
 let sub3 = [];  
+let soundLoop;
 
 
 function preload(){
-    sub1 = [E1, E2, E3, E4, E5, E6, E7, E8, E9];
+
+    // load snowman segments
     sno1 = loadImage("assets/sno1.png");
     sno2 = loadImage("assets/sno2.png");
     sno3 = loadImage("assets/sno3.png");
 
+    // load a left big and small arrow for mouse hover
     leftarrSmall = loadImage("assets/leftarr.png");
     leftarrBig   = loadImage("assets/leftarr.png");
-
+    // load a right big and small arrow for mouse hover
     rightarrSmall = loadImage("assets/rightarr.png");
     rightarrBig = loadImage("assets/rightarr.png");
 
+    // title font
     font = loadFont("assets/HennyPenny-Regular.ttf");
 
+    // declare expressions array
+    sub1 = [E1, E2, E3, E4, E5, E6, E7, E8, E9];
+    // load expressions
     E1 = loadImage("assets/Expressions/E1.png");
     E2 = loadImage("assets/Expressions/E2.png");
     E3 = loadImage("assets/Expressions/E3.png");
@@ -42,17 +50,28 @@ function preload(){
     E8 = loadImage("assets/Expressions/E8.png");
     E9 = loadImage("assets/Expressions/E9.png");
 
+    // declare torso array
+    sub2 = [blueScarf, redScarf, buttons];
+    // load torso selections
     blueScarf = loadImage("assets/Torso/blue.png");
     redScarf = loadImage("assets/Torso/red.png");
     buttons = loadImage("assets/Torso/buttons.png");
-    sub2 = [blueScarf, redScarf, buttons];
 
+    // declare accessories selection
+    sub3 = [buttons2, empty, presents, tophat];
+    // load accessories selection
     buttons2 = loadImage("assets/Accessories/buttons2.png");
     presents = loadImage("assets/Accessories/presents.png");
     tophat = loadImage("assets/Accessories/top hat.png");
-    sub3 = [buttons2, empty, presents, tophat];
 
+    // load sond effect for clicking
+    click = loadSound("assets/Pen Clicking .mp3");
+
+    music = loadSound("assets/Jingle Bells 7 - Kevin MacLeod.mp3");
 }
+
+
+
 function setup(){
     createCanvas(420, 594);
     background(94,68,35);
@@ -77,9 +96,12 @@ function setup(){
     rightarrBig.resize(75, 95);
 
     currentRightArr = rightarrSmall;
+
+    soundLoop = new p5.soundLoop(onSoundLoop, 2);
 }
 
 function draw(){
+    soundLoop.start();
     let bob = sin(frameCount * 0.02) * 4;
     background(94,68,35);  // clear screen
     backdrop();
@@ -93,6 +115,7 @@ function draw(){
         if(pos2 === 2){ image(sno2, 0, 15); image(buttons, 170, 230); }
     }
     // HEAD AND EXPRESSIONS
+    // reload body each time selection is changed
     for (i in sub1){
         if(pos1 === 0){ image(sno1, 0, 15 + bob); image(E1, 0, 10 + bob); }
         if(pos1 === 1){ image(sno1, 0, 15 + bob); image(E2, 0, 25 + bob); }
@@ -112,7 +135,7 @@ function draw(){
 
 }
 
-// function to make dashed linesss
+// function to make dashed lines
 function setLineDash(list) {
   drawingContext.setLineDash(list);
 }
@@ -141,16 +164,19 @@ function backdrop(){
 
 // register arrows being clicked
 function mouseClicked() {
-
     // --- RIGHT TOP ARROW ONLY ---
     if (hit(mouseX, mouseY, rightHitbox[0])) {
         if (pos1 < 8) pos1++;
+        // play sound effect
+        click.play();
         return;
     }
 
     // --- LEFT TOP ARROW ONLY ---
     if (hit(mouseX, mouseY, leftHitbox[0])) {
         if (pos1 > 0) pos1--;
+        // play sound effect
+        click.play();
         return;
     }
 
@@ -158,6 +184,8 @@ function mouseClicked() {
     if (hit(mouseX, mouseY, rightHitbox[1])) {
         pos2++;
         if (pos2 >= sub2.length) pos2 = 0;
+        // play sound effect
+        click.play();
         return;
     }
 
@@ -165,12 +193,16 @@ function mouseClicked() {
     if (hit(mouseX, mouseY, leftHitbox[1])) {
         pos2--;
         if (pos2 < 0) pos2 = sub2.length - 1;
+        // play sound effect
+        click.play();
         return;
     }
     // --- RIGHT BOTTOM ARROW = ACCESSORY +1 ---
     if (hit(mouseX, mouseY, rightHitbox[2])) {
         pos3++;
         if (pos3 >= sub3.length) pos3 = 0;
+        // play sound effect
+        click.play();
         return;
     }
 
@@ -178,6 +210,8 @@ function mouseClicked() {
     if (hit(mouseX, mouseY, leftHitbox[2])) {
         pos3--;
         if (pos3 < 0) pos3 = sub3.length - 1;
+        // play sound effect
+        click.play();
         return;
     }
 
@@ -278,3 +312,6 @@ function arrows() {
     pop();
 }
 
+function onSoundLoop(){
+    music.play();
+}
