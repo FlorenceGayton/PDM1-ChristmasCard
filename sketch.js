@@ -17,11 +17,14 @@ let pos2 = 0;
 let sub2 = [];
 let pos3 = 0;       
 let sub3 = [];  
-let soundLoop;
+let musicOnIcon, musicOffIcon;
+let musicIsOn = true; // default that music is on
+let audioUnlocked = false; // browser audio permission
+let gameState = "menu"; // "menu" or "game"
+
 
 
 function preload(){
-
     // load snowman segments
     sno1 = loadImage("assets/sno1.png");
     sno2 = loadImage("assets/sno2.png");
@@ -66,18 +69,18 @@ function preload(){
 
     // load sond effect for clicking
     click = loadSound("assets/Pen Clicking .mp3");
-
+    // load jingle bells
     music = loadSound("assets/Jingle Bells 7 - Kevin MacLeod.mp3");
+    // load music on/off button
+    musicOnIcon = loadImage("assets/Audio on.png");
+    musicOffIcon = loadImage("assets/Audio off.png");
+
 }
 
 
 
 function setup(){
     createCanvas(420, 594);
-    background(94,68,35);
-    backdrop();
-
-
     // LEFT ARROWS
     leftarrSmall.resize(70, 90);
     leftarrBig.resize(75, 95);
@@ -97,17 +100,28 @@ function setup(){
 
     currentRightArr = rightarrSmall;
 
-    soundLoop = new p5.soundLoop(onSoundLoop, 2);
+
 }
 
 function draw(){
-    soundLoop.start();
-    let bob = sin(frameCount * 0.02) * 4;
-    background(94,68,35);  // clear screen
-    backdrop();
 
-    buttonSize();               // update buttonsss
-    arrows();                   // draw all arrows
+    if (gameState === "menu") {
+        drawMenu();
+        return;
+    }
+
+    let bob = sin(frameCount * 0.02) * 4;
+    background(94,68,35); 
+    backdrop();        
+
+    buttonSize();
+
+    // ACCESSORIES- exluding tophat- drawn over head
+    if (pos3 === 0) {image(sno3, 0, 15); image(buttons2, 190, 400);}
+    if (pos3 === 1){image(sno3, 0, 15);}
+    if (pos3 === 2) {image(sno3, 0, 15); image(presents, 40, 458);}
+    if (pos3 === 3) {image(sno3, 0, 15);}
+
     // TORSO
     for (i in sub2){
         if(pos2 === 0){ image(sno2, 0, 15); image(blueScarf, 100, 194); }
@@ -127,11 +141,17 @@ function draw(){
         if(pos1 === 7){ image(sno1, 0, 15 + bob); image(E8, 5, 10 + bob); }
         if(pos1 === 8){ image(sno1, 0, 15 + bob); image(E9, 0, 10 + bob); }
     }
-    // ACCESSORIES
-    if (pos3 === 0) {image(buttons2, 190, 400);}
-    if (pos3 === 1){}
-    if (pos3 === 2) {image(presents, 40, 458);}
+    // tophat after head so it draws as top layer
     if (pos3 === 3) {image(tophat, 220, 15 + bob);}
+    arrows();
+    // Draw music icon (top-left)
+    let iconSize = 50;
+    image(
+        musicIsOn ? musicOnIcon : musicOffIcon,
+        15, 2,
+        iconSize, iconSize
+    );
+
 
 }
 
@@ -141,19 +161,24 @@ function setLineDash(list) {
 }
 
 // background stuff
-function backdrop(){
+function backdrop() {
+    rectMode(CORNER);
+    // main background block
     fill(255, 90, 90);
     strokeWeight(4);
     rect(20, 20, width - 40, height - 40);
-    image(sno3, 0, 15);
-    setLineDash([9, 8]);
-    line(20, 370, 400, 370)
-    image(sno2, 0, 15);
-    line(20, 210, 400, 210)
 
-    fill(147,196,125);
+    // dashed dividing lines
+    setLineDash([9, 8]);
+    line(20, 370, 400, 370);
+    line(20, 210, 400, 210);
+
+    // top banner
+    fill(147, 196, 125);
     setLineDash([9, 8]);
     rect(15, 0, width - 30, 50);
+
+    // title
     fill(0);
     textAlign(CENTER, CENTER);
     textSize(24);
@@ -162,61 +187,98 @@ function backdrop(){
 }
 
 
+
 // register arrows being clicked
 function mouseClicked() {
-    // --- RIGHT TOP ARROW ONLY ---
+    if (gameState === "menu") {
+        let bx = width/2, by = height/2 + 70, bw = 120, bh = 50;
+
+        // CLICK START BUTTON
+        if (mouseX >= bx - bw/2 && mouseX <= bx + bw/2 &&
+            mouseY >= by - bh/2 && mouseY <= by + bh/2) {
+
+            // --- UNLOCK AUDIO IMMEDIATELY ---
+            if (!audioUnlocked) {
+                userStartAudio();
+                audioUnlocked = true;
+                music.loop();
+                click.play();
+                musicIsOn = true;
+            }
+
+            gameState = "game"; // switch to game
+        }
+
+        return; // ignore other clicks while in menu
+    }
+
+    // --- FIRST CLICK ANYWHERE UNLOCKS AUDIO ---
+    if (!audioUnlocked) {
+        userStartAudio();
+        audioUnlocked = true;
+        music.loop();       // default = music playing
+        musicIsOn = true;
+    }
+
+    // --- MUSIC ICON CLICK ---
+    let iconSize = 50;
+    if (mouseX >= 10 && mouseX <= 10 + iconSize &&
+        mouseY >= 10 && mouseY <= 10 + iconSize) {
+
+        if (musicIsOn) {
+            music.stop();
+            musicIsOn = false;
+        } else {
+            music.stop();
+            music.loop();  // restart from beginning
+            musicIsOn = true;
+        }
+        return; // stop processing other clicks
+    }
+
+    // --- EXISTING ARROW LOGIC BELOW ---
+    // RIGHT TOP
     if (hit(mouseX, mouseY, rightHitbox[0])) {
         if (pos1 < 8) pos1++;
-        // play sound effect
         click.play();
         return;
     }
-
-    // --- LEFT TOP ARROW ONLY ---
+    // LEFT TOP
     if (hit(mouseX, mouseY, leftHitbox[0])) {
         if (pos1 > 0) pos1--;
-        // play sound effect
         click.play();
         return;
     }
-
-    // --- RIGHT MIDDLE ARROW = TORSO +1 ---
+    // TORSO RIGHT
     if (hit(mouseX, mouseY, rightHitbox[1])) {
         pos2++;
         if (pos2 >= sub2.length) pos2 = 0;
-        // play sound effect
         click.play();
         return;
     }
-
-    // --- LEFT MIDDLE ARROW = TORSO -1 ---
+    // TORSO LEFT
     if (hit(mouseX, mouseY, leftHitbox[1])) {
         pos2--;
         if (pos2 < 0) pos2 = sub2.length - 1;
-        // play sound effect
         click.play();
         return;
     }
-    // --- RIGHT BOTTOM ARROW = ACCESSORY +1 ---
+    // ACCESSORIES RIGHT
     if (hit(mouseX, mouseY, rightHitbox[2])) {
         pos3++;
         if (pos3 >= sub3.length) pos3 = 0;
-        // play sound effect
         click.play();
         return;
     }
-
-    // --- LEFT BOTTOM ARROW = ACCESSORY -1 ---
+    // ACCESSORIES LEFT
     if (hit(mouseX, mouseY, leftHitbox[2])) {
         pos3--;
         if (pos3 < 0) pos3 = sub3.length - 1;
-        // play sound effect
         click.play();
         return;
     }
-
-
 }
+
 
 // HITBOXES
 let leftHitbox = [
@@ -312,7 +374,22 @@ function arrows() {
     pop();
 }
 
-function onSoundLoop(){
-    music.play();
-}
+function drawMenu() {
+    background(50, 120, 200);
+    fill(255);
+    textAlign(CENTER, CENTER);
+    textSize(36);
+    textFont(font);
+    text("Welcome to Snowman Builder!", width / 2, height / 2 - 50);
 
+    textSize(24);
+    text("Click START to begin", width / 2, height / 2 + 10);
+
+    // Draw a "button" rectangle
+    fill(255, 200, 0);
+    rectMode(CENTER);
+    rect(width/2, height/2 + 70, 120, 50, 10);
+
+    fill(0);
+    text("START", width/2, height/2 + 70);
+}
