@@ -21,6 +21,9 @@ let musicOnIcon, musicOffIcon;
 let musicIsOn = true; // default that music is on
 let audioUnlocked = false; // browser audio permission
 let gameState = "menu"; // "menu" or "game"
+let snowflake;
+let snowflakes = [];
+
 
 
 
@@ -75,12 +78,25 @@ function preload(){
     musicOnIcon = loadImage("assets/Audio on.png");
     musicOffIcon = loadImage("assets/Audio off.png");
 
+    snowflake = loadImage("assets/snowflake.png");
+
 }
 
 
 
 function setup(){
     createCanvas(420, 594);
+
+    // create 20 snowflakes
+    for (let i = 0; i < 20; i++) {
+        snowflakes.push({
+            x: random(width),
+            y: random(-200, 0),    // start slightly above screen
+            speed: random(1, 3),   // different fall speeds
+            size: random(20, 40)   // optional variation
+        });
+    }
+
     // LEFT ARROWS
     leftarrSmall.resize(70, 90);
     leftarrBig.resize(75, 95);
@@ -376,20 +392,40 @@ function arrows() {
 
 function drawMenu() {
     background(50, 120, 200);
+    updateSnowflakes();
     fill(255);
     textAlign(CENTER, CENTER);
-    textSize(36);
+    textSize(45);
     textFont(font);
-    text("Welcome to Snowman Builder!", width / 2, height / 2 - 50);
+    text("Snowman", width / 2, height / 2 - 100);
+    text("Builder!", width / 2, height / 2 -50);
 
     textSize(24);
-    text("Click START to begin", width / 2, height / 2 + 10);
+    text("By Flo", width / 2, height / 2 + 10);
 
-    // Draw a "button" rectangle
     fill(255, 200, 0);
     rectMode(CENTER);
     rect(width/2, height/2 + 70, 120, 50, 10);
 
     fill(0);
-    text("START", width/2, height/2 + 70);
+    text("START", width/2 - 4, height/2 + 65);
 }
+
+
+function updateSnowflakes() {
+    for (let flake of snowflakes) {
+        flake.y += flake.speed;
+
+        // draw the image
+        image(snowflake, flake.x, flake.y, flake.size, flake.size);
+
+        // reset to top when off screen
+        if (flake.y > height) {
+            flake.y = -10;
+            flake.x = random(width);
+            flake.speed = random(1, 3);
+        }
+    }
+}
+
+
