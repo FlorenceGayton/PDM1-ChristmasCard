@@ -1,4 +1,4 @@
-// Declare variables
+// Global variables
 let sno1, sno2, sno3;
 let E1, E2, E3, E4, E5, E6, E7, E8, E9;
 let buttons2, empty, presents, tophat;
@@ -315,3 +315,4 @@ function arrows() {
 function onSoundLoop(){
     music.play();
 }
+
