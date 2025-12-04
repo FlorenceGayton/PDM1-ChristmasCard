@@ -23,8 +23,8 @@ let audioUnlocked = false; // browser audio permission
 let gameState = "menu"; // "menu" or "game"
 let snowflake;
 let snowflakes = [];
-
-
+let Backdrop;
+let border;
 
 
 function preload(){
@@ -80,6 +80,9 @@ function preload(){
 
     snowflake = loadImage("assets/snowflake.png");
 
+    // backdrop
+    Backdrop = loadImage("assets/BackdropXmasCard.png");
+    border = loadImage("assets/Border.png");
 }
 
 
@@ -127,7 +130,7 @@ function draw(){
     }
 
     let bob = sin(frameCount * 0.02) * 4;
-    background(94,68,35); 
+    background(240,248,255); 
     backdrop();        
 
     buttonSize();
@@ -179,10 +182,13 @@ function setLineDash(list) {
 // background stuff
 function backdrop() {
     rectMode(CORNER);
+    // border
+    image(border, 0, 0, 420, 594);
     // main background block
-    fill(255, 90, 90);
+    image(Backdrop, 20, 20, 380, 554)
+
+
     strokeWeight(4);
-    rect(20, 20, width - 40, height - 40);
 
     // dashed dividing lines
     setLineDash([9, 8]);
@@ -190,7 +196,7 @@ function backdrop() {
     line(20, 210, 400, 210);
 
     // top banner
-    fill(147, 196, 125);
+    fill(255, 200, 0);
     setLineDash([9, 8]);
     rect(15, 0, width - 30, 50);
 
